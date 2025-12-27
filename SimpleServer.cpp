@@ -3,6 +3,7 @@
 #include "SimpleServer.hpp"
 #include <unistd.h>
 #include <cstring>
+#include <chrono>
 
 SimpleServer::SimpleServer(int port) {
     // first create the socket
@@ -32,7 +33,9 @@ void SimpleServer::start() {
 }
 
 void SimpleServer::handle_connection(int client_socket) {
-    // Read what the browser asked for
+
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     char buffer[30000] = {0};
     read(client_socket, buffer, 30000);
     std::cout << "Request received:\n" << buffer << std::endl;
@@ -40,6 +43,9 @@ void SimpleServer::handle_connection(int client_socket) {
     std::string response = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<h1>Everything's fine here!</h1>";
     send(client_socket, response.c_str(), response.length(), 0);
 
-    // Hang up
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+    std::cout << "Request processed in " << duration.count() << " ms" << std::endl;
+
     close(client_socket);
 }
