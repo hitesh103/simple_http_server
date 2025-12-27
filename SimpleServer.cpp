@@ -6,18 +6,13 @@
 #include <chrono>
 
 SimpleServer::SimpleServer(int port) {
-    // first create the socket
-    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);// first create the socket
 
-    // then define the address and port
-    address.sin_family = AF_INET;
+    address.sin_family = AF_INET; // then define the address and port
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(port);
 
-    // then Bind the socket to the port
-    bind(server_fd, (struct sockaddr *)&address, sizeof(address));
-
-    // listen for incoming connections
+    bind(server_fd, (struct sockaddr *)&address, sizeof(address));//then Bind the socket to the port
     listen(server_fd, 10); // max 10 connections in queue waiting to be accepted
 }
 
@@ -37,8 +32,18 @@ void SimpleServer::handle_connection(int client_socket) {
     auto start_time = std::chrono::high_resolution_clock::now();
 
     char buffer[30000] = {0};
-    read(client_socket, buffer, 30000);
-    std::cout << "Request received:\n" << buffer << std::endl;
+    long bytes_read = read(client_socket, buffer, 30000);
+
+    if (bytes_read == -1) {
+        std::cerr << "Error reading from client socket" << std::endl;
+        close(client_socket);
+        return;
+    }
+
+    std::cout << "--- RAW REQUEST START ---" << std::endl;
+    std::cout << "Bytes received: " << bytes_read << std::endl;
+    std::cout << buffer << std::endl;
+    std::cout << "--- RAW REQUEST END ---" << std::endl;
 
     // SIMULATE LAG: Make the browser wait 10 seconds
     std::cout << "Client connected. SIMULATING LAG..." << std::endl;
