@@ -50,6 +50,7 @@ void SimpleServer::handle_connection(int client_socket) {
     sleep(10);
 
     std::string response = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<h1>Everything's fine here!</h1>";
+    // \n\n - after this is actual website content
     send(client_socket, response.c_str(), response.length(), 0);
 
     auto end_time = std::chrono::high_resolution_clock::now();
