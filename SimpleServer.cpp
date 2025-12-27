@@ -40,6 +40,10 @@ void SimpleServer::handle_connection(int client_socket) {
     read(client_socket, buffer, 30000);
     std::cout << "Request received:\n" << buffer << std::endl;
 
+    // SIMULATE LAG: Make the browser wait 10 seconds
+    std::cout << "Client connected. SIMULATING LAG..." << std::endl;
+    sleep(10);
+
     std::string response = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<h1>Everything's fine here!</h1>";
     send(client_socket, response.c_str(), response.length(), 0);
 
